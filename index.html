@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Launcher</title>
+<link rel="icon" type="image/x-icon" href="app.ico">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-blob bg-blob-purple"></div>
+<div class="bg-blob bg-blob-cyan"></div>
+<div class="bg-blob bg-blob-orange"></div>
+<div class="bg-blob bg-blob-blue"></div>
+
+<div class="app-shell">
+  <header class="header glass-card">
+    <div class="header-left">
+      <img src="app.ico" class="app-logo" alt="logo">
+      <span class="header-title">AI86 Launcher</span>
+    </div>
+    <div class="header-right">
+      <button class="btn-guide" onclick="showGuide()">📖 Hướng dẫn nhanh</button>
+      <span id="toolsCount" class="tools-count">0 công cụ</span>
+      <div class="theme-switcher" id="themeSwitcher">
+        <label class="theme-label" for="themeSelect">Theme</label>
+        <select id="themeSelect" class="theme-select" aria-label="Chọn tông màu giao diện">
+          <option value="violet">Tím</option>
+          <option value="ocean">Biển</option>
+          <option value="sunset" selected>Hoàng hôn</option>
+        </select>
+      </div>
+      <button class="btn-playlist" onclick="openUrl('https://www.youtube.com/watch?v=DxtZmBJE0Qs&list=PLg4WykTKAcjtcFDV3vnjfZN_Aqld0q29I')">🎁 Trọn bộ Video hướng dẫn và quà tặng</button>
+    </div>
+  </header>
+
+  <div class="visibility-settings" id="visibilitySettings" style="display:none">
+    <div class="visibility-header">
+      <span>👁️ Hiển thị trên Mod thường</span>
+      <span class="visibility-hint">(Tick để hiển thị, bỏ tick để ẩn)</span>
+    </div>
+    <div class="visibility-grid" id="visibilityGrid"></div>
+  </div>
+
+<!-- GUIDE MODAL -->
+<div class="modal-overlay" id="guideOverlay" onclick="closeGuide()">
+  <div class="modal modal-wide" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span>📖 Hướng dẫn sử dụng</span>
+      <button class="modal-close" onclick="closeGuide()">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="guide-tabs">
+      <button class="guide-tab active" onclick="switchTab(0)">Tổng quan</button>
+      <button class="guide-tab" onclick="switchTab(1)">Pipeline</button>
+      <button class="guide-tab" onclick="switchTab(2)">Auto Capcut</button>
+      <button class="guide-tab" onclick="switchTab(3)">Auto Export</button>
+      <button class="guide-tab" onclick="switchTab(4)">🧩 Phân cảnh dự phòng</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Tab 0: Tổng quan -->
+      <div class="guide-panel active" id="gtab-0">
+        <div class="guide-section" style="border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.08)">
+          <div class="guide-title" style="color:#EF4444">Lưu ý quan trọng — Đọc trước khi sử dụng</div>
+          <div class="guide-text" style="line-height:1.8">
+            <b style="color:#EF4444">1.</b> Đặt thư mục App ở ngoài ổ <b>D:</b> hoặc <b>E:</b>, <b style="color:#EF4444">không đặt trong các thư mục con</b> — sẽ gây lỗi đường dẫn.<br>
+            <b style="color:#EF4444">2.</b> Các nguyên liệu như Ảnh, Video, Kịch bản... cũng để ngay ở thư mục trực thuộc ổ D: hay E: <span style="color:var(--muted)">(Ví dụ: D:\KB1\)</span> — tránh lỗi tên đường dẫn quá dài gây lỗi đồng bộ và lỗi render.<br>
+            <b style="color:#EF4444">3.</b> Nếu lần đầu sử dụng gặp lỗi Render, hãy bấm ngay nút <b>Fix FFmpeg</b> trên màn hình App này.<br>
+            <b style="color:#EF4444">4.</b> Không đặt tên folder hoặc tên file bằng tiếng Việt có dấu, hoặc các ngôn ngữ như Trung, Nhật, Hàn để tránh lỗi xử lý.
+          </div>
+        </div>
+        <div class="guide-section">
+          <div class="guide-title">Bắt đầu nhanh (dành cho hầu hết người dùng)</div>
+          <div class="guide-text">
+            1. Ở phần Đầu vào, có thể dùng <b>Thư mục tất cả nguyên liệu</b> để app tự điền nhanh.<br>
+            2. Nếu cần xuất file Phase 2 ra nơi riêng, chọn <b>Thư mục Output (Phase 2)</b>.<br>
+            3. Chọn <b>Ngôn ngữ Audio</b> và <b>Chế độ Pipeline</b> phù hợp (khuyến nghị bắt đầu từ <b>Cấp 2 — Fast Base</b>).<br>
+            4. Bấm <b>Bắt đầu</b> để chạy Phase 1; nếu bật <b>Chạy thẳng Phase 2</b> thì app render MP4 ngay sau đó.
+          </div>
+        </div>
+        <div class="guide-section">
+          <div class="guide-title">App làm gì sau khi bấm Bắt đầu?</div>
+          <div class="guide-text">
+            • Chuẩn hóa audio để ổn định timestamp.<br>
+            • Nhận diện/căn chỉnh lời theo script.<br>
+            • Tạo metadata segment và render video cuối bằng FFmpeg.
+          </div>
+        </div>
+        <div class="guide-section">
+          <div class="guide-title">Các tab chính trong app hiện tại</div>
+          <div class="guide-text">
+            • <b>Đồng bộ</b>: chạy Phase 1 và có thể chạy tiếp Phase 2 (tùy checkbox).<br>
+            • <b>Batch Export</b>: xử lý hàng loạt nhiều thư mục và đồng bộ sang CapCut theo từng job.<br>
+            • <b>Capcut Export</b>: xuất clip hàng loạt từ project CapCut.<br>
+            • <b>Cắt video</b>: luồng cắt/chỉnh video độc lập.
+          </div>
+        </div>
+        <div class="guide-section guide-tip">
+          <div class="guide-title">Lưu ý quan trọng</div>
+          <div class="guide-text">
+            • Tab <b>Cấu hình xuất Video</b> chỉ áp dụng cho <b>Phase 2 render nội bộ</b>.<br>
+            • Fit policy ở phần <b>Điều khiển / Log</b> là cho luồng đồng bộ CapCut khi media là video.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 1: Pipeline -->
+      <div class="guide-panel" id="gtab-1">
+        <div class="guide-section">
+          <div class="guide-title">Giải thích Chế độ Pipeline (thân thiện người dùng)</div>
+          <div class="guide-text">
+            Bạn chỉ cần chọn 1 mức. Không cần quan tâm ASR nội bộ.<br>
+            Quy tắc chung: <b>cấp càng cao → chính xác hơn → chậm hơn.</b><br><br>
+            <b>Cấp 1 — Light (Nhanh nhất)</b><br>
+            Dùng khi máy yếu hoặc cần xuất nhanh để kiểm tra nháp.<br><br>
+            <b>Cấp 2 — Fast Base (Cân bằng, khuyến nghị)</b><br>
+            Mức mặc định tốt cho đa số dự án: tốc độ tốt, độ chính xác ổn.<br><br>
+            <b>Cấp 3 — Fast Advance (Cân bằng nâng cao)</b><br>
+            Chính xác hơn Cấp 2, phù hợp audio hơi khó nhưng vẫn muốn giữ tốc độ khá.<br><br>
+            <b>Cấp 4 — Quality (Chuẩn xác cao)</b><br>
+            Phù hợp audio nhiều nhiễu, nhiều người nói, hoặc cần đồng bộ chặt hơn.<br><br>
+            <b>Cấp 5 — Quality Advance (Chuẩn xác tối đa)</b><br>
+            Ưu tiên chất lượng cao nhất, thời gian xử lý có thể lâu hơn đáng kể.<br><br>
+            <b>TTS-VN (Chuyên biệt giọng đọc máy tiếng Việt)</b><br>
+            Dành riêng cho nguồn TTS tiếng Việt. App sẽ tự khóa ngôn ngữ về Tiếng Việt để đạt kết quả tốt hơn.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Auto Capcut -->
+      <div class="guide-panel" id="gtab-2">
+        <div class="guide-section">
+          <div class="guide-title">Hướng dẫn tab Auto Capcut</div>
+          <div class="guide-text">
+            1. Chọn <b>Thư mục Drafts</b> rồi bấm <b>Làm mới</b> để nạp dự án.<br>
+            2. Chọn <b>Thư mục đầu ra</b> để lưu clip xuất ra.<br>
+            3. Chọn <b>Chế độ âm thanh khi xuất</b>:<br>
+            • Không kèm âm thanh (cũ): xuất mp4 không âm thanh.<br>
+            • Âm thanh từ media nguồn (Giai đoạn 1): xuất mp4 có âm thanh từ media gốc của segment.<br>
+            • Âm thanh theo timeline CapCut (Giai đoạn 2): hiện đang fallback về âm thanh media nguồn.<br>
+            4. Chọn dự án và bấm <b>Thêm dự án</b>.<br>
+            5. Bấm <b>Bắt đầu xuất clip</b> để chạy hàng loạt.
+          </div>
+        </div>
+        <div class="guide-section">
+          <div class="guide-title">Theo dõi kết quả</div>
+          <div class="guide-text">
+            • <b>Đã xuất</b>: số clip xuất thành công.<br>
+            • <b>Lỗi</b>: số clip lỗi.<br>
+            • <b>Thư mục đầu ra</b>: thư mục kết quả của dự án.
+          </div>
+        </div>
+        <div class="guide-section guide-tip">
+          <div class="guide-title">Lỗi thường gặp</div>
+          <div class="guide-text">
+            1. Kiểm tra project có <b>draft_content.json</b>.<br>
+            2. Kiểm tra Output root có quyền ghi.<br>
+            3. Bấm Refresh và Add lại project nếu danh sách chưa đúng.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Auto Export -->
+      <div class="guide-panel" id="gtab-3">
+        <div class="guide-section">
+          <div class="guide-title">Hướng dẫn tab Batch Export</div>
+          <div class="guide-text">
+            1. Chọn <b>Thư mục Drafts</b> CapCut và bấm <b>Làm mới</b>.<br>
+            2. Chọn <b>Fit video</b> mặc định (Video ngắn hơn/dài hơn Audio).<br>
+            3. Chọn <b>Ngôn ngữ job</b> và <b>Pipeline job</b> mặc định.<br>
+            4. Bấm <b>Thêm thư mục</b> để thêm job.<br>
+            5. Chọn các dòng cần áp cấu hình rồi bấm <b>Áp dụng cho mục đã chọn</b>.<br>
+            6. Bấm <b>Bắt đầu batch</b> để chạy.
+          </div>
+        </div>
+        <div class="guide-section">
+          <div class="guide-title">Điều khiển CapCut</div>
+          <div class="guide-text">
+            • Hai nút <b>Mở CapCut</b> và <b>Đóng CapCut</b> nằm sát mép phải hàng điều khiển.<br>
+            • Dòng trạng thái cạnh các nút chạy hiển thị thông báo mới nhất liên quan CapCut.
+          </div>
+        </div>
+        <div class="guide-section guide-tip">
+          <div class="guide-title">Lưu ý</div>
+          <div class="guide-text">
+            • Fit policy được lưu theo từng thư mục job và được dùng khi export CapCut của job đó.<br>
+            • Job lỗi sẽ có chi tiết trong cột Error/Project và log phía dưới.
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Phân cảnh dự phòng -->
+      <div class="guide-panel" id="gtab-4">
+        <div class="guide-section" style="border-color:rgba(20,184,166,.35);background:rgba(20,184,166,.08)">
+          <div class="guide-title" style="color:#14B8A6">🧩 Hướng dẫn Phân cảnh</div>
+          <div class="guide-text">
+            Link app chính và tài liệu hướng dẫn nhanh cho bộ công cụ phân cảnh.
+          </div>
+        </div>
+        <div class="guide-section guide-tip">
+          <div class="guide-title">App chính 1 (AI Studio)</div>
+          <div class="guide-text">
+            <a href="#" class="notice-link" onclick="openUrl('https://ai.studio/apps/9abadf1d-6ab4-4191-aad4-f0dd807ee5ac');return false;">https://ai.studio/apps/9abadf1d-6ab4-4191-aad4-f0dd807ee5ac</a>
+          </div>
+        </div>
+        <div class="guide-section">
+          <div class="guide-title">Tài liệu hướng dẫn App 1</div>
+          <div class="guide-text">
+            <a href="#" class="notice-link" onclick="openUrl('Phan canh.pdf');return false;">Mở file Phan canh.pdf</a>
+          </div>
+        </div>
+        <div class="guide-section">
+          <div class="guide-title">App chính 2 (AI Studio)</div>
+          <div class="guide-text">
+            <a href="#" class="notice-link" onclick="openUrl('https://ai.studio/apps/2d2f9883-895c-4aed-8912-6f60f2229ec9');return false;">https://ai.studio/apps/2d2f9883-895c-4aed-8912-6f60f2229ec9</a>
+          </div>
+        </div>
+        <div class="guide-section guide-tip">
+          <div class="guide-title">Link dự phòng 1 (ChatGPT GPTs)</div>
+          <div class="guide-text">
+            <a href="#" class="notice-link" onclick="openUrl('https://chatgpt.com/g/g-69c3916215b481919b264962526e40ba-phan-canh-kich-ban-ai86');return false;">https://chatgpt.com/g/g-69c3916215b481919b264962526e40ba-phan-canh-kich-ban-ai86</a>
+          </div>
+        </div>
+        <div class="guide-section">
+          <div class="guide-title">Link dự phòng 2 (Gemini Gem)</div>
+          <div class="guide-text">
+            <a href="#" class="notice-link" onclick="openUrl('https://gemini.google.com/gem/5513c40fa705');return false;">https://gemini.google.com/gem/5513c40fa705</a>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+<section class="tools-panel glass-card">
+  <div class="tools-head" id="toolsSection"></div>
+  <div class="scroll-body">
+    <div class="grid" id="cardsGrid"></div>
+  </div>
+</section>
+
+<footer class="page-footer glass-card">
+  <div class="footer-contact">
+    <span class="footer-left">Liên hệ Telegram:</span>
+    <a class="footer-telegram" href="#" onclick="openUrl('https://t.me/nobitabx');return false;">@nobitabx</a>
+  </div>
+  <div class="footer-contact">
+    <span class="footer-left">Liên hệ FB:</span>
+    <a class="footer-telegram" href="#" onclick="openUrl('https://www.facebook.com/deshunvn');return false;">facebook.com/deshunvn</a>
+  </div>
+</footer>
+</div>
+
+<!-- DOWNLOAD PROGRESS OVERLAY (per card, injected dynamically) -->
+
+<!-- NOTICE POPUP -->
+<div class="notice-overlay" id="noticeOverlay">
+  <div class="notice-modal">
+    <div class="notice-glow"></div>
+    <div class="notice-header">
+      <span class="notice-icon">📢</span>
+      <span class="notice-title">Thông Báo</span>
+      <span class="notice-badge">Mới</span>
+    </div>
+    <div class="notice-body" id="noticeBody">
+      <div class="notice-loading">⏳ Đang tải thông báo...</div>
+    </div>
+    <div class="notice-footer">
+      <button class="btn-notice-skip" onclick="dismissNotice(true)">🔕 Không hiện lại trong 48h</button>
+      <button class="btn-notice-close" onclick="dismissNotice(false)">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
