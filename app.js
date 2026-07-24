@@ -27,7 +27,7 @@ const STATIC_ENTRIES = [
   },
   {
     name: 'Phân Cảnh AI',
-    desc: 'Tự động chia kịch bản thành các prompt tạo ảnh. Hỗ trợ Gemini 3 Pro/Flash, tuỳ chỉnh phong cách và tỷ lệ khung hình.',
+    desc: 'Tự động chia kịch bản thành các prompt tạo ảnh. Hỗ trợ KymaAPI, tuỳ chỉnh phong cách và tỷ lệ khung hình.',
     notice: '⚠️ Lưu ý: Đọc kỹ hướng dẫn ngay trên trang phân cảnh.',
     icon: 'icon_phancanh_ai.png',
     accent: '#10B981',
