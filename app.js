@@ -32,7 +32,7 @@ const STATIC_ENTRIES = [
     icon: 'icon_phancanh_ai.png',
     accent: '#10B981',
     type: 'url',
-    target: 'https://ai.studio/apps/9abadf1d-6ab4-4191-aad4-f0dd807ee5ac',
+    target: 'https://phancanh.ai86.pro/',
     info: 'ai.studio · App 1',
     needs_license: false,
     step: 1,
